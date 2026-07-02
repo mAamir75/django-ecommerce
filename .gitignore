@@ -1,0 +1,23 @@
+# Virtual Environment
+env/
+
+# Python
+__pycache__/
+*.pyc
+
+# Django
+db.sqlite3
+*.log
+
+# Environment variables (SECRET KEYS)
+.env
+
+# Media files
+media/
+
+# Editor
+.vscode/
+.idea/
+
+# OS
+.DS_Store
