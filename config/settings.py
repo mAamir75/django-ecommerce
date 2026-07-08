@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -39,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'store',
     'cart',
-    'orders'
+    'orders',
+    'payment',
 ]
 
 MIDDLEWARE = [
@@ -123,3 +125,8 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR /'products'
 # CART_SESSION_ID = 'cart'
 SESSION_CART_ID = 'cart'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+STRIPE_PUBLISHABLE_KEY = config('STRIPE_PUBLISHABLE_KEY')
+STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY')
