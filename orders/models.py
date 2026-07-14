@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.conf import settings
 # Create your models here.
 
 
@@ -14,6 +14,7 @@ class Order(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     paid = models.BooleanField(default=False)
+    stripe_id = models.CharField(max_length=200, blank=True)
 
 
     class Meta:
@@ -30,6 +31,23 @@ class Order(models.Model):
         #items is the reference of OrderItem.
         # so self.items.all() is a reverse relation lookup that returns all OrderItem objects for this order
         return sum(item.get_cost() for item in self.items.all())
+    
+
+    def get_stripe_url(self):
+
+        if not self.stripe_id:
+
+            return ''
+        
+        if '_test_' in settings.STRIPE_SECRET_KEY:
+
+            path = '/test/'
+        
+        else:
+            path = '/'
+        
+        return f'https://dashboard.stripe.com{path}payments/{self.stripe_id}'
+
 
         
 
