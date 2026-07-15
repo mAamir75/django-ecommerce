@@ -4,6 +4,7 @@ from .cart import Cart
 from store.models import Product
 from .forms import AddProductQuantityForm
 from django.contrib import messages
+from coupons.forms import CouponApplyForm
 # Create your views here.
 
 
@@ -47,4 +48,11 @@ def cart_detail(request):
             initial={'quantity':item['quantity'], 'override':True}
         )
         cart_items.append(item)
-    return render(request, 'cart/cart_detail.html', {'cart':cart, 'cart_items':cart_items})
+    coupon_apply_form = CouponApplyForm()
+    return render(request, 'cart/cart_detail.html',
+                   {
+                       'cart':cart,
+                        'cart_items':cart_items,
+                        'coupon_apply_form':coupon_apply_form
+                    }
+                )

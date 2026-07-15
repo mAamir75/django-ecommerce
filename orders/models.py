@@ -1,10 +1,15 @@
 from django.db import models
 from django.conf import settings
+from coupons.models import Coupon
+from django.core.validators import MinValueValidator, MaxValueValidator
+from decimal import Decimal
 # Create your models here.
 
 
 class Order(models.Model):
 
+    coupon = models.ForeignKey(Coupon, null=True, blank=True, on_delete=models.SET_NULL, related_name='orders')
+    discount = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)], default=0)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     email = models.EmailField()
@@ -30,7 +35,8 @@ class Order(models.Model):
         # Get all OrderItems belonging to this order
         #items is the reference of OrderItem.
         # so self.items.all() is a reverse relation lookup that returns all OrderItem objects for this order
-        return sum(item.get_cost() for item in self.items.all())
+        total_cost = self.get_total_cost_before_discount()
+        return total_cost - self.get_discount()
     
 
     def get_stripe_url(self):
@@ -49,8 +55,15 @@ class Order(models.Model):
         return f'https://dashboard.stripe.com{path}payments/{self.stripe_id}'
 
 
-        
+    def get_total_cost_before_discount(self):
+        return sum(item.get_cost() for item in self.items.all())    
 
+    
+    def get_discount(self):
+        total_cost = self.get_total_cost_before_discount()
+        if self.discount:
+            return total_cost * (self.discount/Decimal(100))
+        return Decimal(0)
 
 
 class OrderItem(models.Model):

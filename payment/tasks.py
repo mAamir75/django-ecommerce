@@ -11,7 +11,7 @@ def payment_completed(order_id):
     email = EmailMessage(
         f"My Shop - Invoice no. {order.id}",
         "Please find attached your invoice.",
-        "admin@myshop.com",
+        None,
         [order.email],
     )
 
